@@ -1,0 +1,24 @@
+{
+  "name": "trumper-tantrum",
+  "version": "0.0.1",
+  "description": "Possibly Donald Trump's favorite game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpoegel/TrumperTantrum.git"
+  },
+  "keywords": [
+    "Donald",
+    "Trump",
+    "game"
+  ],
+  "author": "Matt Poegel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mpoegel/TrumperTantrum/issues"
+  },
+  "homepage": "https://github.com/mpoegel/TrumperTantrum#readme"
+}
