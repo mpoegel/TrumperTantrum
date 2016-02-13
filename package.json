@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/mpoegel/TrumperTantrum/issues"
   },
-  "homepage": "https://github.com/mpoegel/TrumperTantrum#readme"
+  "homepage": "https://github.com/mpoegel/TrumperTantrum#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.0.6",
+    "jade": "^1.11.0",
+    "less-middleware": "^2.0.1"
+  }
 }
