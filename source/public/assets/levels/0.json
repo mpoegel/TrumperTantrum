@@ -1,0 +1,18 @@
+{
+  "terrain": [
+    {
+      "x": 0,
+      "y": 288,
+      "frames": [15],
+      "span": 50,
+      "name": "ground"
+    },
+    {
+      "x": 200,
+      "y": 200,
+      "frames": [20],
+      "span": 3,
+      "name": "block"
+    }
+  ]
+}
