@@ -11,14 +11,21 @@ var scenes = [],
     hair = [],
     f_projectiles = [],
     enemies = [],
+    goal = undefined,
+    bernie = undefined,
     forward = true,
     posX = 0,
+    endX = 0,
     egoLevel = 100,
     moneyLevel = 100;
 
 var Q_DOWN = false;
 
 function loadLevel(game, scene) {
+  var background = new Sprite(WIDTH, WIDTH);
+  background.image = game.assets['/assets/background.png'];
+  scene.addChild(background);
+  
   $.get('/assets/levels/0.json', function(level) {
     for (var td=0; td<level.terrain.length; td++) {
       for (var r=0; r<level.terrain[td].span; r++) {
@@ -58,6 +65,28 @@ function loadLevel(game, scene) {
       scene.addChild(e);
       enemies.push(e);
     }
+    bernie = new Sprite(32,32);
+    bernie.image = game.assets['/assets/sprites.png'];
+    bernie.x = level.goal.bernie.x;
+    bernie.y = level.goal.bernie.y;
+    bernie.frame = [8];
+    bernie.tl.moveBy(level.goal.bernie.range, 0, level.goal.bernie.speed)
+          .delay(50)
+          .scaleTo(-1, 1, level.goal.bernie.speed / 5)
+          .moveBy(level.goal.bernie.range * -1, 0, level.goal.bernie.speed)
+          .delay(50)
+          .scaleTo(1, 1, level.goal.bernie.speed / 5)
+          .loop();
+    scene.addChild(bernie);
+    
+    goal = new Sprite(200, 120);
+    goal.image = game.assets['/assets/whitehouse.png'];
+    goal.x = level.goal.whitehouse.x;
+    goal.y = level.goal.whitehouse.y;
+    scene.addChild(goal);   
+    
+    endX = level.goal.end;
+    
   });
 }
 
@@ -74,7 +103,9 @@ function loadAudio(game) {
 function ready() {
   enchant(); // initialize
   var game = new Core(HEIGHT, WIDTH); // game stage
+  game.preload('/assets/background.png');
   game.preload('/assets/sprites.png'); // preload image
+  game.preload('/assets/whitehouse.png');
   game.preload('/assets/audio/swoosh.wav');
   loadAudio(game);
   game.fps = 20;
@@ -99,7 +130,9 @@ function ready() {
   })();
   
   game.onload = function() {
-    var scene = new Scene();
+    var scene = new Scene();  
+    loadLevel(game, scene);
+    
     var bear = new Sprite(U_WIDTH, U_HEIGHT);
     bear.image = game.assets['/assets/sprites.png'];
     var score = new Label('Score: 0');
@@ -144,9 +177,7 @@ function ready() {
     bear.dy = 0;
     bear.dx = 0;
     bear.jump = 0;
-    
-    loadLevel(game, scene);
-    
+        
     var jumping = false
     game.addEventListener('enterframe', function() {
       if (game.input.right) {
@@ -255,7 +286,7 @@ function ready() {
         enemies[e].x -= bear.dx;
         if ( enemies[e].within(bear, 20) ) {
           // GAME OVER!
-          gameover(game, scene);
+          gameover(game, scene, false);
         }
       }
       
@@ -278,9 +309,16 @@ function ready() {
         }
       }
       
+      if (bear.x + posX >= endX) {
+        gameover(game, scene, true);
+      }
+      
+      goal.x -= bear.dx;
+      bernie.x -= bear.dx;
+      
       egoLevel -= 0.1;
       if (egoLevel <= 0) {
-        gameover(game, scene);
+        gameover(game, scene, false);
       }
       egoBar.width = egoLevel;
       moneyBar.width = moneyLevel;
@@ -292,12 +330,18 @@ function ready() {
   game.start(); // start your game!
 }
 
-function gameover(game,scene) {
-  var gameover = new Label('GAME OVER');
-  gameover.x = WIDTH / 5;
-  gameover.y = HEIGHT / 3;
-  gameover.font = '32px bold Helvetica,Arial,sans-serif';
-  scene.addChild(gameover);
+function gameover(game,scene, finish) {
+  var gameoverText;
+  if (finish) {
+    gameoverText = new Label('BERNIE WINS');
+    gameoverText.x = WIDTH / 5.2;
+  } else {
+    gameoverText = new Label('GAME OVER');
+    gameoverText.x = WIDTH / 5;
+  }
+  gameoverText.y = HEIGHT / 3;
+  gameoverText.font = '32px bold Helvetica,Arial,sans-serif';
+  scene.addChild(gameoverText);
   var subtitle = new Label('Press Enter to Restart');
   subtitle.x = WIDTH / 3.2;
   subtitle.y = HEIGHT / 2.2;
