@@ -12,7 +12,9 @@ var scenes = [],
     f_projectiles = [],
     enemies = [],
     forward = true,
-    posX = 0;
+    posX = 0,
+    egoLevel = 100,
+    moneyLevel = 100;
 
 var Q_DOWN = false;
 
@@ -59,11 +61,22 @@ function loadLevel(game, scene) {
   });
 }
 
+var trumpisms = [
+  'what_am_I_saying.mp3',
+  'shoot_somebody.mp3'
+];
+function loadAudio(game) {
+  for (var i in trumpisms) {
+    game.preload('/assets/audio/' + trumpisms[i]);
+  }
+}
+
 function ready() {
   enchant(); // initialize
   var game = new Core(HEIGHT, WIDTH); // game stage
   game.preload('/assets/sprites.png'); // preload image
-  game.preload('/assets/audio/what_am_I_saying.mp3');
+  game.preload('/assets/audio/swoosh.wav');
+  loadAudio(game);
   game.fps = 20;
   game.keybind(65, 'left');	
   game.keybind(68, 'right');
@@ -71,7 +84,20 @@ function ready() {
   game.keybind(83, 'down');
   game.keybind(81, 'money');
   game.keybind(82, 'yell');
-
+  
+  var playTrumpism = (function() {
+    var i = 0,
+        playing = false;
+    return function() {
+      if (playing) return;
+      playing = true;
+      game.assets['/assets/audio/' + trumpisms[i]].play();
+      window.setTimeout(function() { playing = false; }, 2500);
+      i++;
+      if (i >= trumpisms.length) i = 0;
+    }
+  })();
+  
   game.onload = function() {
     var scene = new Scene();
     var bear = new Sprite(U_WIDTH, U_HEIGHT);
@@ -80,7 +106,35 @@ function ready() {
     score.val = 0;
     score.x = 5;
     score.y = 5;
-    scene.addChild(score);    
+    scene.addChild(score);
+    
+    var egoLabel = new Label('Ego');
+    egoLabel.x = 15;
+    egoLabel.y = 20;
+    scene.addChild(egoLabel);    
+    var egoBar = new Sprite(egoLevel, 10);
+    egoBar.disableCollection();
+    egoBar.x = 43;
+    egoBar.y = 23;
+    var egoImage = new Surface(egoLevel, 10);
+    egoImage.context.fillStyle = '#980e18';
+    egoImage.context.fillRect(0, 0, egoLevel, 10);
+    egoBar.image = egoImage;
+    scene.addChild(egoBar);
+    
+    var moneyLabel = new Label('Money');
+    moneyLabel.x = 2;
+    moneyLabel.y = 35;
+    scene.addChild(moneyLabel);    
+    var moneyBar = new Sprite(moneyLevel, 10);
+    moneyBar.disableCollection();
+    moneyBar.x = 43;
+    moneyBar.y = 38;
+    var moneyImage = new Surface(moneyLevel, 10);
+    moneyImage.context.fillStyle = '#207410';
+    moneyImage.context.fillRect(0, 0, moneyLevel, 10);
+    moneyBar.image = moneyImage;
+    scene.addChild(moneyBar);
     
     scene.addChild(bear);
     game.pushScene(scene);
@@ -93,6 +147,7 @@ function ready() {
     
     loadLevel(game, scene);
     
+    var jumping = false
     game.addEventListener('enterframe', function() {
       if (game.input.right) {
         if (bear.x >= WIDTH/2) {
@@ -123,15 +178,18 @@ function ready() {
         bear.frame = [0];
       }
       posX += bear.dx;
-      if (game.input.up && bear.jump < 3) {
-        bear.dy -= 5;
+      if (game.input.up && ! jumping && bear.jump < 2) {
+        bear.dy -= 8;
         bear.jump++;
+        jumping = true;
+      } else if (! game.input.up) {
+        jumping = false;
       }
       bear.y += bear.dy
       bear.dy += 1;
       
       /* attacks */
-      if (game.input.money && ! Q_DOWN) {
+      if (game.input.money && ! Q_DOWN && moneyLevel > 0) {
         var m = new Sprite(32,32);
         m.image = game.assets['/assets/sprites.png'];
         m.x = bear.x;
@@ -145,13 +203,17 @@ function ready() {
             .removeFromScene();
         f_projectiles.push(m);
         scene.addChild(m);
+        game.assets['/assets/audio/swoosh.wav'].play();
         Q_DOWN = true;
+        moneyLevel -= 1;
       } else if (! game.input.money) {
         Q_DOWN = false;
       }
       if (game.input.yell) {
-        game.assets['/assets/audio/what_am_I_saying.mp3'].play();
+        playTrumpism();
         bear.frame = [3];
+        egoLevel += 5;
+        if (egoLevel > 100) egoLevel = 100;
       }
       
       /* collisions */
@@ -193,22 +255,7 @@ function ready() {
         enemies[e].x -= bear.dx;
         if ( enemies[e].within(bear, 20) ) {
           // GAME OVER!
-          var gameover = new Label('GAME OVER');
-          gameover.x = WIDTH / 5;
-          gameover.y = HEIGHT / 3;
-          gameover.font = '32px bold Helvetica,Arial,sans-serif';
-          scene.addChild(gameover);
-          var subtitle = new Label('Press Enter to Restart');
-          subtitle.x = WIDTH / 3.2;
-          subtitle.y = HEIGHT / 2.2;
-          scene.addChild(subtitle);
-          $(document).on('keydown', function(event) {
-            if (event.which === 13) {
-              restart(scene);
-              $(document).off();
-            }
-          });
-          game.stop();
+          gameover(game, scene);
         }
       }
       
@@ -231,11 +278,37 @@ function ready() {
         }
       }
       
+      egoLevel -= 0.1;
+      if (egoLevel <= 0) {
+        gameover(game, scene);
+      }
+      egoBar.width = egoLevel;
+      moneyBar.width = moneyLevel;
+      
       score.text = "Score: " + score.val;
     });
     
   };
   game.start(); // start your game!
+}
+
+function gameover(game,scene) {
+  var gameover = new Label('GAME OVER');
+  gameover.x = WIDTH / 5;
+  gameover.y = HEIGHT / 3;
+  gameover.font = '32px bold Helvetica,Arial,sans-serif';
+  scene.addChild(gameover);
+  var subtitle = new Label('Press Enter to Restart');
+  subtitle.x = WIDTH / 3.2;
+  subtitle.y = HEIGHT / 2.2;
+  scene.addChild(subtitle);
+  $(document).on('keydown', function(event) {
+    if (event.which === 13) {
+      restart(scene);
+      $(document).off();
+    }
+  });
+  game.stop();
 }
 
 function restart(scene) {
@@ -246,6 +319,8 @@ function restart(scene) {
   enemies = [];
   forward = true;
   posX = 0;
+  egoLevel = 100;
+  moneyLevel = 100;
   scene.remove();
   ready();
 }
