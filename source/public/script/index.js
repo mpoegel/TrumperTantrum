@@ -11,13 +11,14 @@ var scenes = [],
     hair = [],
     f_projectiles = [],
     enemies = [],
+    moneybags = [],
     goal = undefined,
     bernie = undefined,
     forward = true,
     posX = 0,
     endX = 0,
     egoLevel = 100,
-    moneyLevel = 100;
+    moneyLevel = 50;
 
 var Q_DOWN = false;
 
@@ -26,7 +27,7 @@ function loadLevel(game, scene) {
   background.image = game.assets['/assets/background.png'];
   scene.addChild(background);
   
-  $.get('/assets/levels/0.json', function(level) {
+  $.get('/assets/levels/1.json', function(level) {
     for (var td=0; td<level.terrain.length; td++) {
       for (var r=0; r<level.terrain[td].span; r++) {
         var t = new Sprite(32,32);
@@ -65,6 +66,15 @@ function loadLevel(game, scene) {
       scene.addChild(e);
       enemies.push(e);
     }
+    for (var m=0; m<level.moneybags.length; m++) {
+      var mb = new Sprite(32,32);
+      mb.image = game.assets['/assets/sprites.png'];
+      mb.x = level.moneybags[m].x;
+      mb.y = level.moneybags[m].y;
+      mb.frame = [14];
+      moneybags.push(mb);
+      scene.addChild(mb);
+    }
     bernie = new Sprite(32,32);
     bernie.image = game.assets['/assets/sprites.png'];
     bernie.x = level.goal.bernie.x;
@@ -92,7 +102,8 @@ function loadLevel(game, scene) {
 
 var trumpisms = [
   'what_am_I_saying.mp3',
-  'shoot_somebody.mp3'
+  'shoot_somebody.mp3',
+  'politically_correct.mp3'
 ];
 function loadAudio(game) {
   for (var i in trumpisms) {
@@ -236,7 +247,7 @@ function ready() {
         scene.addChild(m);
         game.assets['/assets/audio/swoosh.wav'].play();
         Q_DOWN = true;
-        moneyLevel -= 1;
+        moneyLevel -= 10;
       } else if (! game.input.money) {
         Q_DOWN = false;
       }
@@ -309,6 +320,18 @@ function ready() {
         }
       }
       
+      for (var m=0; m<moneybags.length; m++) {
+        if (bear.within(moneybags[m], 15)) {
+          score.val += 100;
+          moneyLevel += 50;
+          if (moneyLevel > 100) moneyLevel = 100;
+          scene.removeChild(moneybags[m]);
+          moneybags.splice(m, 1);
+        } else {
+          moneybags[m].x -= bear.dx;
+        }
+      }
+      
       if (bear.x + posX >= endX) {
         gameover(game, scene, true);
       }
@@ -316,7 +339,7 @@ function ready() {
       goal.x -= bear.dx;
       bernie.x -= bear.dx;
       
-      egoLevel -= 0.1;
+      egoLevel -= 0.5;
       if (egoLevel <= 0) {
         gameover(game, scene, false);
       }
