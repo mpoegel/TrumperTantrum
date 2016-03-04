@@ -103,7 +103,11 @@ function loadLevel(game, scene) {
 var trumpisms = [
   'what_am_I_saying.mp3',
   'shoot_somebody.mp3',
-  'politically_correct.mp3'
+  'politically_correct.mp3',
+  'nice_person.mp3',
+  'crime_and_rapists.wav',
+  'really_rich.mp3',
+  'bing_bong.mp3'
 ];
 function loadAudio(game) {
   for (var i in trumpisms) {
