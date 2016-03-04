@@ -12,6 +12,7 @@ var scenes = [],
     f_projectiles = [],
     enemies = [],
     moneybags = [],
+    controls = undefined,
     goal = undefined,
     bernie = undefined,
     forward = true,
@@ -89,6 +90,12 @@ function loadLevel(game, scene) {
           .loop();
     scene.addChild(bernie);
     
+    controls = new Sprite(200,120);
+    controls.image = game.assets['/assets/controls.png'];
+    controls.x = -5;
+    controls.y = 150;
+    scene.addChild(controls);
+    
     goal = new Sprite(200, 120);
     goal.image = game.assets['/assets/whitehouse.png'];
     goal.x = level.goal.whitehouse.x;
@@ -119,6 +126,7 @@ function ready() {
   enchant(); // initialize
   var game = new Core(HEIGHT, WIDTH); // game stage
   game.preload('/assets/background.png');
+  game.preload('/assets/controls.png');
   game.preload('/assets/sprites.png'); // preload image
   game.preload('/assets/whitehouse.png');
   game.preload('/assets/audio/swoosh.wav');
@@ -342,6 +350,7 @@ function ready() {
       
       goal.x -= bear.dx;
       bernie.x -= bear.dx;
+      controls.x -= bear.dx;
       
       egoLevel -= 0.5;
       if (egoLevel <= 0) {
