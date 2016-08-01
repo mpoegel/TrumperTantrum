@@ -1,4 +1,5 @@
 node_modules/
-libs/
 */**/*.css
 */**/*.xcf
+source/**/*.js
+typings

@@ -1,18 +1,18 @@
 {
-  "terrain": [
+  "platforms": [
     {
       "x": 0,
-      "y": 288,
+      "y": 368,
       "frames": [15],
       "span": 50,
-      "name": "ground"
+      "name": "blocks"
     },
     {
       "x": 200,
-      "y": 200,
+      "y": 268,
       "frames": [20],
       "span": 3,
-      "name": "block"
+      "name": "blocks"
     }
   ],
   "hair": [
@@ -42,6 +42,6 @@
       "range": 50,
       "speed": 40
     },
-    "end": 480
+    "end": 800
   }
 }

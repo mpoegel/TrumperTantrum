@@ -1,3 +1,14 @@
-script(type="text/javascript", scr="/libs/enchant.min.js")
 script(type="text/javascript", src="/libs/jquery.min.js")
-script(type="text/javascript", src="/script/index.js")
+script(type="text/javascript", src="/libs/phaser.min.js")
+script(type="text/javascript", src="/script/game.js")
+script(type="text/javascript", src="/script/boot.js")
+script(type="text/javascript", src="/script/preloader.js")
+script(type="text/javascript", src="/script/player.js")
+script(type="text/javascript", src="/script/level.js")
+
+script(type="text/javascript").
+  window.onload = function() {
+    var game = new TrumperTantrum.Game();
+  }
+
+//- script(type="text/javascript", src="/script/index.js")

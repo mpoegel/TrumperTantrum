@@ -1,7 +1,12 @@
+/**
+ * routes/index.ts
+ */
+/// <reference path="../../typings/index.d.ts" />
 'use strict';
 
-var express = require('express'),
-    router = express.Router();
+import express = require('express');
+
+let router = express.Router();
 
 router.use('/libs', require('./libs.js'));
 

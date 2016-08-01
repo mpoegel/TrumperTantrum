@@ -1,6 +1,6 @@
 {
   "name": "trumper-tantrum",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Possibly Donald Trump's favorite game",
   "main": "server.js",
   "scripts": {
@@ -27,6 +27,10 @@
     "gulp-nodemon": "^2.0.6",
     "jade": "^1.11.0",
     "jquery": "^2.2.0",
-    "less-middleware": "^2.0.1"
+    "less-middleware": "^2.0.1",
+    "phaser": "^2.4.7"
+  },
+  "devDependencies": {
+    "gulp-typescript": "^2.13.4"
   }
 }
