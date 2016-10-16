@@ -1,18 +1,14 @@
 {
   "globalDependencies": {
-    "es6-promise": "registry:dt/es6-promise#0.0.0+20160423074304",
     "express": "registry:dt/express#4.0.0+20160317120654",
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160322035842",
     "jquery": "registry:dt/jquery#1.10.0+20160417213236",
     "less-middleware": "registry:dt/less-middleware#2.0.1+20160316155526",
     "mime": "registry:dt/mime#0.0.0+20160316155526",
-    "node": "registry:dt/node#6.0.0+20160514165920",
+    "node": "registry:dt/node#6.0.0+20161014191813",
     "p2": "https://raw.githubusercontent.com/photonstorm/phaser/master/typescript/p2.d.ts",
     "phaser": "https://raw.githubusercontent.com/photonstorm/phaser/master/typescript/phaser.d.ts",
     "pixi": "https://raw.githubusercontent.com/photonstorm/phaser/master/typescript/pixi.d.ts",
     "serve-static": "registry:dt/serve-static#0.0.0+20160501131543"
-  },
-  "dependencies": {
-    "es6-promise": "registry:npm/es6-promise#3.0.0+20160211003958"
   }
 }
